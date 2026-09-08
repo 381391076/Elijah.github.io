@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="560" viewBox="0 0 480 560">
+  <filter id="ice" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency=".32 .39" numOctaves="3" seed="18" result="grain"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".012 .02" numOctaves="2" seed="7" result="flow"/>
+    <feDisplacementMap in="grain" in2="flow" scale="16" xChannelSelector="R" yChannelSelector="G"/>
+    <feColorMatrix type="saturate" values="0"/>
+    <feComponentTransfer>
+      <feFuncR type="table" tableValues=".24 .48 .77 .94"/>
+      <feFuncG type="table" tableValues=".37 .61 .85 .97"/>
+      <feFuncB type="table" tableValues=".59 .79 .96 1"/>
+      <feFuncA type="table" tableValues="0 .8"/>
+    </feComponentTransfer>
+  </filter>
+  <rect width="480" height="560" filter="url(#ice)" opacity=".8"/>
+</svg>
