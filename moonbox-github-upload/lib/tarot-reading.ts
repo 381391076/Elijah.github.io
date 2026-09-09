@@ -108,6 +108,24 @@ function lens(c:DrawnCard):Lens {
  const rank=(c.id-22)%14;
  return {axis:rank===5?'change':(['start','connection','clarity','balance'] as Axis[])[p.suit],focus:c.isReversed?p.tension:c.upright.split('；')[0],step:p.experiment,question:c.isReversed?'这项张力是否确实出现在你的经历中':'这份能力是否用在了合适的对象和时机上'};
 }
+// Short, practical take-away for the receipt; shares the reading's action data.
+export function buildTarotTakeaway(cards:DrawnCard[],question='',free=false):string {
+ if(![1,3].includes(cards.length)||cards.some(c=>!Number.isInteger(c.id)||c.id<0||c.id>77)||new Set(cards.map(c=>c.id)).size!==cards.length)return '';
+ if(/自杀|自残|不想活|诊断|癌症|药物|停药|治疗|诉讼|官司|投资|股票|基金|借贷/.test(question))return '先把已经发生的事实、最担心的问题和需要的帮助分别写清。涉及健康、法律或资金的决定，请与相应专业人员确认后再行动；若眼下有人身危险，立即联系当地紧急服务或可信赖的人。';
+ const topic=suggestTopic(question),first=lens(cards[0]),last=lens(cards[cards.length-1]);
+ const steps=[first.step,last.step].filter((s,i,a)=>a.indexOf(s)===i);
+ const opening=free?'先从一个能改变的环节开始：':cards.length===1?'今天先做这一件事：':'先稳住眼前这一步：';
+ const action=opening+steps[0]+'。'+(steps[1]?'接下来，'+steps[1]+'。':'');
+ const obstacle=cards.length===3&&!free?obstacleText(cards[1],lens(cards[1])):'';
+ const followup:Record<ReadingTopic,string>={
+ general:'做完后记下一个实际变化：事情是否更容易推进，双方是否更清楚下一步；没有改善，就调整这一步的做法。',
+ work:'把商定的负责人、交付时间和完成标准写下来，下次交付后检查是否减少返工。',
+ love:'选一次平静的对话，说出一个具体请求，让对方回应；随后留意双方能否做到约定。',
+ design:'先在一个作品片段上试行，请一位不了解背景的人体验，记录对方在哪一步停顿，再决定是否扩大修改。',
+ growth:'把练习限定在十分钟内，一周后比较完成次数与精力变化，再调整难度。',
+ };
+ return action+(obstacle?'同时留意：'+obstacle:'')+followup[topic];
+}
 export function buildTarotReading(cards:DrawnCard[],topic:ReadingTopic='general',free=false,question='') {
  if(![1,3].includes(cards.length)||cards.some(c=>!Number.isInteger(c.id)||c.id<0||c.id>77)||new Set(cards.map(c=>c.id)).size!==cards.length) return null;
  const lenses=cards.map(lens), last=lenses[lenses.length-1], plan=plans[topic];
