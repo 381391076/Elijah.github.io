@@ -281,6 +281,25 @@
 .tarot-card-insight{border-top:1px solid #b8c9d044;padding-top:2px;margin-top:24px}
 .tarot-card-insight p{font-size:14px;line-height:2;margin:12px 0}
 .tarot-insight>label{display:block;font-size:13px;margin:0 0 10px}
+.liuyao-details{margin:24px 0;border-top:1px solid #a9bdc966;border-bottom:1px solid #a9bdc966}
+.liuyao-details>summary{display:flex;align-items:center;gap:12px;padding:18px 0;cursor:pointer;list-style:none;font-size:16px;color:inherit}
+.liuyao-details>summary::-webkit-details-marker{display:none}
+.liuyao-details>summary:focus-visible{outline:2px solid #7895a6;outline-offset:5px}
+.liuyao-details-hint{font-size:12px;color:#7895a6;margin-left:auto}
+.liuyao-details-chevron{transition:transform .2s;font-size:20px}
+.liuyao-details[open] .liuyao-details-chevron{transform:rotate(180deg)}
+.liuyao-details-body{padding:0 0 20px;font-size:14px;line-height:2;overflow-wrap:anywhere}
+.liuyao-details-body h3{font-size:17px;font-weight:500;margin:24px 0 12px}
+.liuyao-details-body h4{font-size:15px;font-weight:500;margin:0 0 4px}
+.liuyao-details-body p{margin:12px 0;line-height:2}
+.liuyao-details-body a,.liuyao-details-body small{font-size:12px;color:#7895a6}
+.liuyao-details-body a{text-decoration:underline;text-underline-offset:3px}
+.liuyao-line-reading{padding:18px 0;border-top:1px dashed #a9bdc955}
+.liuyao-details-body blockquote{margin:14px 0;padding:8px 14px;border-left:2px solid #a9bdc9}
+.liuyao-details-body ol{padding-left:22px;list-style:decimal}
+.liuyao-details-body li{padding-left:5px;margin:12px 0}
+@media(max-width:480px){.liuyao-details>summary{flex-wrap:wrap;gap:6px}.liuyao-details-hint{font-size:11px}.liuyao-details-body{font-size:14px}}
+@media(prefers-reduced-motion:reduce){.liuyao-details-chevron{transition:none}}
 .tarot-insight [data-slot="select-trigger"]{width:100%;background:transparent;color:inherit;border-color:#a9bdc9}
 @media(max-width:640px){.tarot-insight{padding:16px 13px}.tarot-insight>p{font-size:14px}}
 @media(max-width:390px){.tarot-cards{gap:6px}.tarot-card{border-radius:11px}.tarot-card::before{inset:4px;border-radius:7px}}

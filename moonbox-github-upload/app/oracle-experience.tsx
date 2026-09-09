@@ -1,6 +1,7 @@
 'use client';
 import TarotSymbol from './tarot-symbol';
 import TarotSummary from './tarot-summary';
+import LiuyaoDetails from './liuyao-details';
 import {houseNotes} from '@/lib/astrology-summaries';
 import DiceDocumentReading from './dice-document-reading';
 import DiceSummary from './dice-summary';
@@ -103,7 +104,7 @@ export default function OracleExperience(){
  <button className="primary-action" disabled={busy} onClick={()=>void activate()}>{busy?'请稍候…':actionLabel}<ChevronRight size={16}/></button></>:
  <div className="reading-body" aria-live="polite">
  {question&&<blockquote>{question}</blockquote>}
- {result?.kind==='liuyao'&&(partial?<><p>已记录 {values.length} 爻，还剩 {6-values.length} 次。</p><div className="coin-results">{result.coins.map((c,i)=><CastCoin key={i} value={c}/>)}</div><p className="method-copy">本次合计 {values.at(-1)}：{({6:'老阴 · 动爻',7:'少阳',8:'少阴',9:'老阳 · 动爻'} as Record<number,string>)[values.at(-1)!]}。继续按星芒确认键，让下一爻落定。</p></>:base&&changed&&<><div className="reading-title"><span>{base.upper.nature}{base.lower.nature}</span><h3>{base.name}卦</h3><p>{base.prompt}</p></div><p>上卦 {base.upper.name}：{base.upper.meaning}。<br/>下卦 {base.lower.name}：{base.lower.meaning}。</p><div className="result-section"><h3>{moving.length?'变卦 · '+changed.name:'静卦 · 无动爻'}</h3><p>{moving.length?changed.prompt:'六爻均不变。可以先围绕本卦主题，观察自己当下的处境。'}</p>{moving.length>0&&<small>第 {moving.join('、')} 爻变动；图中 ○ 为老阳，× 为老阴。</small>}</div><p className="method-copy">当前为铜钱起卦与基础卦象提示，不含纳甲、世应、六亲、旺衰或完整六爻断卦。</p></>)}
+ {result?.kind==='liuyao'&&(partial?<><p>已记录 {values.length} 爻，还剩 {6-values.length} 次。</p><div className="coin-results">{result.coins.map((c,i)=><CastCoin key={i} value={c}/>)}</div><p className="method-copy">本次合计 {values.at(-1)}：{({6:'老阴 · 动爻',7:'少阳',8:'少阴',9:'老阳 · 动爻'} as Record<number,string>)[values.at(-1)!]}。继续按星芒确认键，让下一爻落定。</p></>:base&&changed&&<><div className="reading-title"><span>{base.upper.nature}{base.lower.nature}</span><h3>{base.name}卦</h3><p>{base.prompt}</p></div><p>上卦 {base.upper.name}：{base.upper.meaning}。<br/>下卦 {base.lower.name}：{base.lower.meaning}。</p><div className="result-section"><h3>{moving.length?'变卦 · '+changed.name:'静卦 · 无动爻'}</h3><p>{moving.length?changed.prompt:'六爻均不变。可以先围绕本卦主题，观察自己当下的处境。'}</p>{moving.length>0&&<small>第 {moving.join('、')} 爻变动；图中 ○ 为老阳，× 为老阴。</small>}</div><LiuyaoDetails values={result.values} question={question}/></>)}
  {result?.kind==='liuren'&&<><div className="reading-title"><span>时落 · {result.data.palace.key}</span><h3>{result.data.palace.name}</h3></div><p>{result.data.palace.text}</p><div className="reflection"><small>问问自己</small><p>{result.data.palace.ask}</p></div><p className="method-copy">农历 {result.data.month} 月 {result.data.day} 日 · {hours[result.data.hour-1]}时。<br/>月落 {palaces[result.data.steps[0]].name}，日落 {palaces[result.data.steps[1]].name}，时落 {result.data.palace.name}。</p></>}
  {result?.kind==='tarot'&&result.cards.map((c,i)=><div className="card-reading" key={c.id}><span className="card-index">0{i+1}</span><div><small>{c.position} · {c.isReversed?'逆位':'正位'}</small><h3>{c.name}</h3><p>{c.isReversed?c.reversed:c.upright}。</p></div></div>)}
  {result?.kind==='tarot'&&<TarotSummary cards={result.cards} free={result.free} question={question}/>}
