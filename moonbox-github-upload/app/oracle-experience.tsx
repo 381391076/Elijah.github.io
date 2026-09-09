@@ -1,4 +1,5 @@
 'use client';
+import ReceiptPrinter from './receipt-printer';
 import TarotSymbol from './tarot-symbol';
 import TarotSummary from './tarot-summary';
 import LiuyaoDetails from './liuyao-details';
@@ -101,7 +102,8 @@ export default function OracleExperience(){
  {mode.id==='liuyao'&&<p className="method-copy">每次摇三枚铜钱，共六次，从初爻往上记录。有字面记 2，背面记 3：6 老阴、7 少阳、8 少阴、9 老阳。老阴、老阳为动爻。</p>}
  {mode.id==='life'&&<p className="method-copy">从 12 张主题卡中随机抽取一张，围绕关系、边界、成长等话题，留一个自我提问，尝试一件小事。没有标准答案。</p>}
  {mode.id==='dice'&&<p className="method-copy">三颗十二面骰分别对应天体与点、星座、宫位。第一颗含太阳至冥王星，以及南、北交点。依次读出：什么动力被激活、它怎样运作、在哪里出现。</p>}
- <button className="primary-action" disabled={busy} onClick={()=>void activate()}>{busy?'请稍候…':actionLabel}<ChevronRight size={16}/></button></>:
+ <button className="primary-action" disabled={busy} onClick={()=>void activate()}>{busy?'请稍候…':actionLabel}<ChevronRight size={16}/></button>
+ </>:
  <div className="reading-body" aria-live="polite">
  {question&&<blockquote>{question}</blockquote>}
  {result?.kind==='liuyao'&&(partial?<><p>已记录 {values.length} 爻，还剩 {6-values.length} 次。</p><div className="coin-results">{result.coins.map((c,i)=><CastCoin key={i} value={c}/>)}</div><p className="method-copy">本次合计 {values.at(-1)}：{({6:'老阴 · 动爻',7:'少阳',8:'少阴',9:'老阳 · 动爻'} as Record<number,string>)[values.at(-1)!]}。继续按星芒确认键，让下一爻落定。</p></>:base&&changed&&<><div className="reading-title"><span>{base.upper.nature}{base.lower.nature}</span><h3>{base.name}卦</h3><p>{base.prompt}</p></div><p>上卦 {base.upper.name}：{base.upper.meaning}。<br/>下卦 {base.lower.name}：{base.lower.meaning}。</p><div className="result-section"><h3>{moving.length?'变卦 · '+changed.name:'静卦 · 无动爻'}</h3><p>{moving.length?changed.prompt:'六爻均不变。可以先围绕本卦主题，观察自己当下的处境。'}</p>{moving.length>0&&<small>第 {moving.join('、')} 爻变动；图中 ○ 为老阳，× 为老阴。</small>}</div><LiuyaoDetails values={result.values} question={question}/></>)}
@@ -111,6 +113,7 @@ export default function OracleExperience(){
  {result?.kind==='life'&&<><div className="reading-title"><span>生命课题 · 自我探索</span><h3>{result.data.name}</h3><p>{result.data.subtitle}</p></div><div className="reflection"><small>问问自己</small><p>{result.data.question}</p></div><div className="result-section"><h3>今天，试一件小事</h3><p>{result.data.action}</p></div><p className="method-copy">{result.data.note}</p></>}
  {result?.kind==='dice'&&<><div className="reading-title"><span>行星 × 星座 × 宫位</span><h3 className="dice-title">{planets[result.data.planet][1]} · {signs[result.data.sign][1]} · 第{result.data.house+1}宫</h3></div><div className="result-section"><h3>动力 · {planets[result.data.planet][1]}</h3><p>{planets[result.data.planet][2]}。</p><p className="dice-example">{planetExamples[result.data.planet]}</p><h3>方式 · {signs[result.data.sign][1]} <span className="element-tag">{zodiacElements[result.data.sign%4].name}</span></h3><p>{signs[result.data.sign][2]}运作。</p><p className="dice-example">{zodiacElements[result.data.sign%4].name}星座（{zodiacElements[result.data.sign%4].signs}）的共同表达：{zodiacElements[result.data.sign%4].style}。</p><h3>领域 · 第{result.data.house+1}宫</h3><p>{houses[result.data.house]}。</p><small>{houseNotes[result.data.house]}</small></div><DiceDocumentReading key={[result.data.planet,result.data.sign,result.data.house].join('-')} {...result.data}/><DiceSummary {...result.data}/></>}
  <button className="primary-action" disabled={busy} onClick={()=>void activate()}>{busy?'请稍候…':actionLabel}<ChevronRight size={16}/></button>
+ {result&&!partial&&!busy&&<ReceiptPrinter result={result} question={question}/>}
  </div>}
  {error&&<p className="error" role="alert">{error}</p>}
  <button className="text-button" onClick={back} disabled={busy}><ArrowLeft size={14}/> 返回主目录</button></>}
