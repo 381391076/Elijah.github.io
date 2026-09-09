@@ -278,6 +278,10 @@
 .tarot-insight li::marker{color:#7895a6;font-size:12px}
 .tarot-insight li strong{font-size:14px;font-weight:500}
 .tarot-insight li p{font-size:14px;line-height:1.95;margin-top:6px}
+.tarot-card-insight{border-top:1px solid #b8c9d044;padding-top:2px;margin-top:24px}
+.tarot-card-insight p{font-size:14px;line-height:2;margin:12px 0}
+.tarot-insight>label{display:block;font-size:13px;margin:0 0 10px}
+.tarot-insight [data-slot="select-trigger"]{width:100%;background:transparent;color:inherit;border-color:#a9bdc9}
 @media(max-width:640px){.tarot-insight{padding:16px 13px}.tarot-insight>p{font-size:14px}}
 @media(max-width:390px){.tarot-cards{gap:6px}.tarot-card{border-radius:11px}.tarot-card::before{inset:4px;border-radius:7px}}
 /* Keep the device alongside expanded readings, without nested scrolling. */
