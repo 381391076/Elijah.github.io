@@ -61,7 +61,7 @@ export function diceInsight(planet:number,sign:number,house:number) {
  return {
   title:`${planets[planet][1]} × ${signs[sign][1]} × 第${house+1}宫`,
   paragraphs:[
-   `结合《行星》《星座》《十二宮位》的对应主题，这组骰子的主线可以理解为：在「${houses[house]}」领域，尝试${motive[0]}，并以${style[0]}的方式表达。`,
+   `这组星骰把重点放在「${houses[house]}」：你可以尝试${motive[0]}，同时${style[0]}，找到适合当前处境的行动方式。`,
    `放到具体生活中，可以对照${context[0]}。例如，当这类事情让你反复在意时，值得分辨：你想处理的是眼前安排，还是安排背后尚未被回应的需要。${interplay}`,
    `需要留意的失衡是：${motive[1]}。${signs[sign][1]}的表达方式也提醒你${style[1]}。这些是供你与真实经历核对的可能性，不代表他人的动机或未来已经确定。`,
   ],

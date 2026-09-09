@@ -4,7 +4,7 @@ import {tarotPractice} from './tarot-practice';
 // Editorial reflection rules adapted from the Moonlit Mirror interpretation protocol.
 // This is a local rule engine, not model-generated text or evidence about the user.
 export const readingTopics = {
- general: '通用梳理', design: '网页与创作', work: '工作与协作', love: '感情与关系', growth: '个人成长',
+ general: '通用梳理', design: '灵感与创作', work: '工作与协作', love: '感情与关系', growth: '个人成长',
 } as const;
 export type ReadingTopic = keyof typeof readingTopics;
 type Axis = 'start'|'balance'|'clarity'|'change'|'confidence'|'connection';
@@ -56,6 +56,52 @@ export function suggestTopic(question:string):ReadingTopic {
  return matches.length===1?matches[0]:'general';
 }
 const label=(c:DrawnCard)=>`${c.name}·${c.isReversed?'逆位':'正位'}`;
+const majorObstacles = [
+ '新方向很吸引人，但如果还没确认成本和准备条件，尝试也可能变成不断重来',
+ '手头有能力和资源，却可能太依赖自己掌控全局，忽略了协作与实际限制',
+ '安静观察有时会变成一直等待；没有说出口的疑问，也难以得到清楚回应',
+ '持续照顾人或事很有价值，但替所有人承担需要，可能挤掉自己的精力',
+ '结构可以支持推进，但如果每个细节都必须按既定方式完成，必要的调整也会受阻',
+ '已有经验提供了方向，也可能让新的需要被旧规则挡住',
+ '想让每一方都满意，可能使真正重要的取舍迟迟无法明确',
+ '专注目标能带来进展，但只顾往前推进，可能来不及听见不同意见',
+ '耐心和克制不等于一直忍耐；有些负担需要说清，而非独自消化',
+ '独处有助于思考，但如果一直自己寻找答案，可能错过外部信息与支持',
+ '等待时机变化，可能让本来能主动调整的部分也停了下来',
+ '追求公平需要共同标准；只争论谁有道理，可能忽略怎样解决眼前的问题',
+ '换位思考若没有带来新信息，暂停也可能逐渐变成没有期限的等待',
+ '急于进入新阶段，可能让必要的告别、交接或现实安排被跳过',
+ '为了维持和谐而不断折中，可能让必须面对的分歧一直没有解决',
+ '短期的满足或安全感，可能让一项长期消耗显得难以放手',
+ '急于推翻旧安排，可能连仍然有效的支持也一并丢掉',
+ '理想中的效果可能抬高了开始行动的门槛，让小进展也显得不够好',
+ '信息不清时，想象容易填补空白；越反复猜测，越难分辨事实与担忧',
+ '只关注积极的一面，可能让尚未解决的困难缺少被讨论的空间',
+ '反复回顾过去若只停在评价自己，可能没有留下尝试不同做法的余地',
+ '希望所有细节都圆满，可能让已经足够完成的事情迟迟无法收尾',
+];
+function obstacleText(c:DrawnCard,l:Lens) {
+ const concern=c.isReversed?l.focus:c.id<22?majorObstacles[c.id]:tarotPractice(c)!.tension;
+ return `${concern}。`;
+}
+const contextPrompts: Record<ReadingTopic,[string,string,string]> = {
+ general:['从最近一次具体经历入手，分清已经发生的事与担心会发生的事。','看看事情停在哪里：缺少信息、条件不够，还是彼此的期待没有说清？','选一个自己能改变的环节，给它设定完成时间和回看日期。'],
+ work:['回想最近一次让你挂心的任务：实际收到的反馈是什么，哪些担忧还没有得到证实？','把争议落到一项具体交付上：双方对标准的理解是否一致，执行中又有哪些困难？','为眼前任务列出必要收尾、交接对象和可停止的额外投入，避免把所有问题都带到下一阶段。'],
+ design:['回看最近一次创作：哪里已经表达清楚，哪里仍只是你对效果的设想？','请一个不了解创作背景的人说说感受，比较对方接收到的内容与你想表达的是否一致。','选一个作品片段完成小样，先收集对这一处的反馈，再决定是否扩展。'],
+ love:['回想最近一次互动，分别写下对方实际说做了什么，以及你如何理解它。','挑出一个尚未说开的分歧，区分你的需要与对方已经明确表达的意愿。','把期待说成一个可以回应的小请求，同时给对方不同意或提出替代方式的空间。'],
+ growth:['回想最近一次卡住的时刻，当时的精力、环境和任务难度分别怎样？','辨认一条反复要求自己的标准：它在帮助你，还是让你难以开始？','把改变缩成一次能够完成的练习，并留意做完后是更轻松还是更疲惫。'],
+};
+function cardPrompt(c:DrawnCard,l:Lens,role:string,topic:ReadingTopic) {
+ // Specific observations take priority over broad suit-level guidance.
+ if(topic==='love'&&c.id===58&&c.isReversed)return {context:'如果一次沉默让你不断设想关系变坏，可以先回看对方实际说过、做过什么。挑一个最在意的疑问温和询问，别让连续猜测代替一次清楚的交流。',check:'你现在最担心的事已经发生了，还是你害怕它会发生？'};
+ if(topic==='love'&&c.id===63&&!c.isReversed&&role==='阻碍')return {context:'留意对话是否变成了讲道理、分对错，却没有回应彼此的感受。可以先说清自己为什么在意，再讨论哪些边界需要坚持、哪些细节可以协商。',check:'上一次争论中，你更想证明自己有道理，还是希望某个需要被听见？'};
+ if(topic==='love'&&c.id===59&&c.isReversed&&role==='建议')return {context:'如果一段争执已经过去，可以说清仍需处理的一件事，并约定怎样结束反复翻旧账。收尾不等于必须结束关系，也可以是结束一种持续伤人的互动方式。',check:'你希望停止的是这段关系，还是关系里某一种让你疲惫的相处方式？'};
+ if(topic==='work'&&c.id===58&&c.isReversed)return {context:'如果你反复担心任务出错，先找出一项可以查证的事，例如对方是否真的提出了不满；把尚未发生的最坏结果暂时放到一边。',check:'最近让你睡不踏实的担忧，哪些已有事实支持，哪些还只是反复设想？'};
+ if(topic==='work'&&c.id===63&&!c.isReversed&&role==='阻碍')return {context:'可以检查：讨论是否过于强调谁更有道理，却没有处理执行者遇到的困难？先请双方各举一个具体例子，再确认标准能否落实。',check:'你坚持的那条标准解决了什么问题？有没有给实际困难留下协商空间？'};
+ if(topic==='work'&&c.id===59&&c.isReversed&&role==='建议')return {context:'如果一个任务已进入尾声，先确认哪些必须交接、哪些可以停止；把仍有价值的经验留下，不必继续为所有旧问题补救。',check:'哪一项收尾完成后，你就可以停止反复回看这件事？'};
+ const index=role==='阻碍'?1:role==='建议'?2:0;
+ return {context:contextPrompts[topic][index],check:role==='建议'?`如果尝试“${l.step}”，你准备从哪个最小环节开始？`:role==='阻碍'?`“${l.focus}”具体影响了哪一步？还有哪些现实原因需要考虑？`:`最近哪件事让你联想到“${l.focus}”？有没有不符合这个描述的地方？`};
+}
 function lens(c:DrawnCard):Lens {
  if(c.id<22){const [axis,up,rev,step,repair]=major[c.id];return {axis,focus:c.isReversed?rev:up,step:c.isReversed?repair:step,question:c.isReversed?'它是否受阻、过度使用，或需要恢复条件':'它是否发挥了作用，还是在此处被过度依赖'};}
  const p=tarotPractice(c)!;
@@ -67,10 +113,14 @@ export function buildTarotReading(cards:DrawnCard[],topic:ReadingTopic='general'
  const lenses=cards.map(lens), last=lenses[lenses.length-1], plan=plans[topic];
  const positioned=cards.length===3&&!free;
  const names=cards.map(label);
+ const shownContexts=new Set<string>();
  const insights=cards.map((c,i)=>{
  const l=lenses[i], role=positioned?['现状','阻碍','建议'][i]:free?['左牌','中牌','右牌'][i]:'当下提示';
- const reading=role==='阻碍'?`放在阻碍位，需要核对的不是这张牌“好不好”，而是${l.focus}是否让事情难以推进。${c.isReversed?'先观察受阻的条件，不把逆位直接当成失败。':'正位的能力也可能因使用过度、缺少时机或只停留在期待中而成为卡点。'}`:role==='建议'?`这张牌把调整方向落在：${l.step}。它提供一种可尝试的方法，并不保证结果。`:`这张牌提供的观察角度是：${l.focus}。先找一件最近的实际经历对照，符合的部分才值得继续分析。`;
- return {title:`${role}：${names[i]}`,text:reading,context:`放到${readingTopics[topic]}中，可以${topicExamples[topic][l.axis]}。`,check:`核对：${l.question}？`};
+ const reading=role==='阻碍'?obstacleText(c,l):role==='建议'?`这张牌把调整方向落在：${l.step}。它提供一种可尝试的方法，并不保证结果。`:`这张牌提供的观察角度是：${l.focus}。先找一件最近的实际经历对照，符合的部分才值得继续分析。`;
+ const prompt=cardPrompt(c,l,role,topic);
+ const context=shownContexts.has(prompt.context)?'':prompt.context;
+ shownContexts.add(prompt.context);
+ return {title:`${role}：${names[i]}`,text:reading,context,check:`想一想：${prompt.check}`};
  });
  const relations:string[]=[];
  if(positioned){relations.push(`「${names[0]}」关注${lenses[0].focus}；「${names[1]}」则让你检查${lenses[1].focus}。${lenses[0].axis===lenses[1].axis?'两张牌落在同一类问题上：可能不是投入不足，而是同一种做法既支撑现状、又在过度使用时造成阻碍。':'两张牌的关注点不同：只沿着现状的方向继续用力，未必能回应阻碍指出的条件。'}因此，建议牌「${names[2]}」的具体作用是${last.step}，做完后再观察卡点是否变化。`);}
